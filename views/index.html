@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link
+			rel="stylesheet"
+			href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
+		/>
+		<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+		<style>
+			a{display: none;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<h1>留言板</h1>
+					<form>
+						<textarea
+							class="form-control"
+							name="message"
+							id=""
+						></textarea>
+						<br />
+						<button
+							type="button"
+							class="btn btn-primary pull-right"
+						>
+							提交
+						</button>
+						<a class="bg-warning" href="index.html">有新留言，点击查看</a>
+					</form>
+					<script>
+						$(function(){
+							/* $('button[type="submit"]').click(()=>{
+
+							}) */
+							$('button[type="button"]').on('click',()=>{
+								$.post('/sub-message',{message:$('textarea').val()},data=>{
+									console.log(data);
+									if(data){
+										const li = document.createElement('li')//创建li节点
+										$(li).addClass('list-group-item text-info list-group-item-info')//给li添加类名（把创建的li节点转化为jQuery对象）
+										li.innerHTML=$('textarea').val()+'<span class="pull-right">'+new Date().toLocaleDateString().replace(/\//g,'-')+'</span>'
+										$('ul').prepend(li)// 把li塞到ul里面的前面
+										$('textarea').val('')//清空输入框
+									}
+								})
+							})
+						})
+						$(function(){
+							setInterval(()=>{
+								$.post('/getMessageLength',{},data=>{
+								if(data!=$('ul>li').length){
+									$('a').slideDown()
+								}
+							})
+							},10000)
+							
+						})
+					</script>
+				</div>
+				<div class="col-sm-12">
+					<br />
+					<ul class="list-group">
+						{{each newArr}}
+						<li
+							class="list-group-item text-info list-group-item-info"
+						>
+							{{$value.message}}
+							<span class="pull-right"> {{$value.time}} </span>
+						</li>
+						{{/each}}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
